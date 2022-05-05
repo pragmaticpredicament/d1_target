@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Open Target</title>
+	
+	<style>
+		.actions table {
+			border-collapse: collapse;
+		}
+		
+		th, td {
+			text-align: left;
+			padding: 2px;
+		}
+
+
+		.setup, .game, .results {
+			border: 3px solid gray;
+			border-radius: 8px;
+			display: inline-block;
+			margin-bottom: 20px;
+			padding-top: 5px;
+		}
+		
+		.target_container{
+			border: 2px solid gray;
+			border-radius: 5px;
+			margin: 5px;
+		}
+		
+		.page {
+  			text-align: center;
+		}
+
+		.actions table, .stage, .overall {
+			border-collapse: separate;
+			border: 2px solid gray;
+			border-radius: 5px;
+		}
+		
+		.actioncol1, .actioncol2 {
+			width: 50%;
+		}
+		
+		.run_detect, .run_clear, .run_actions, .cancel_actions {
+			font-weight: bold;
+			margin-top: 8px;
+			margin-bottom: 13px;
+		}
+		
+		.section_title {
+			font-weight: bold;
+			font-size: 20px;
+		}
+		
+		.stage_target_stats{
+			width: 320px;
+		}
+		
+		.target_miss, .target_hit, .target_failed{
+			border-radius: 5px;
+			padding: 2px 8px;
+			font-size: 14px;
+			margin: 3px;
+			display: inline-block;
+		}
+		
+		.target_miss{
+			background-color: tomato;
+		}
+		.target_hit{
+			background-color: palegreen;
+		}
+		.target_failed {
+			background-color: yellow;
+		}
+    </style>
+</head>
+<body>
+   <div class="page">
+   	<div class="setup_outer">
+			<div class="setup">
+				<label class="section_title">Target Setup</label>
+				<div class="target_container">
+					<table id="targets" class="targets"></table>
+				</div>
+				<table id="detect" class="detect"></table>
+				<button class="run_detect" onclick="DetectTargets(this)">Detect Targets</button>
+				<button class="run_clear" onclick="ClearTargets(this)">Clear Targets</button>
+			</div>
+		</div>
+		<div class="game_outer">
+			<div class="game">	
+				<label class="section_title">Game Actions</label>
+				<table id="actions" class="actions"></table>
+				<button id="run_actions" class="run_actions" onclick="RunGame(this)">Run Game</button>
+				<button id="cancel_actions" class="cancel_actions" onclick="CancelGame(this)">Cancel</button>
+			</div>
+		</div>
+		<div class="results_outer">
+			<div class="results">	
+				<label class="section_title">Game Results</label>
+				<table id="results_output" class="results_output"></table>
+			</div>
+		</div>
+	</div>
+
+	<script src="game.js"></script>
+	<script src="actions.js"></script>
+	<script src="detector.js"></script>
+	<script src="report.js"></script>
+</body>
+</html>
