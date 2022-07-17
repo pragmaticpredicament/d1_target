@@ -1,8 +1,4 @@
 function UpdateReport(report){
-	let report_table = document.getElementById('results_output');
-	while(report_table.rows.length>0){
-		report_table.deleteRow(0);
-	} 
 
 	function FormatTimeMilli(time_ms){
 		let seconds = time_ms/1000;
@@ -63,19 +59,19 @@ function UpdateReport(report){
 			}
 		}
 
-		table.appendChild(CreateRow([CreateLabel('Misses')
-											,CreateText('misses',misses,true)]));
-		table.appendChild(CreateRow([CreateLabel('Penalty')
-											,CreateText('penalty',FormatTimeMilli(penalty),true)]));
-		table.appendChild(CreateRow([CreateLabel('Overall')
-											,CreateText('overall',FormatTimeMilli(overall_time),true)]));
-		table.appendChild(CreateRow([CreateLabel('Target Stage Time')
-											,CreateText('target_stage_time',FormatTimeMilli(target_stage_time),true)]));
 		table.appendChild(CreateRow([CreateLabel('Target Time')
 											,CreateText('target_time',FormatTimeMilli(target_time),true)]));
-		table.appendChild(CreateRow([CreateLabel('Hit Variance')
+		table.appendChild(CreateRow([CreateLabel('Misses')
+											,CreateText('misses',misses,true)]));
+		table.appendChild(CreateRow([CreateLabel('Penalty','minor_metric')
+											,CreateText('penalty',FormatTimeMilli(penalty),true)]));
+		table.appendChild(CreateRow([CreateLabel('Target Stage Time','minor_metric')
+											,CreateText('target_stage_time',FormatTimeMilli(target_stage_time),true)]));
+		table.appendChild(CreateRow([CreateLabel('Overall','minor_metric')
+											,CreateText('overall',FormatTimeMilli(overall_time),true)]));
+		table.appendChild(CreateRow([CreateLabel('Hit Variance','minor_metric')
 									,CreateText('hit_variance',FormatTimeMicro(target_hit_variance),true)]));
-		table.appendChild(CreateRow([CreateLabel('Sample Variance')
+		table.appendChild(CreateRow([CreateLabel('Sample Variance','minor_metric')
 									,CreateText('sample_variance',FormatTimeMicro(target_sample_variance),true)]));
 
 		report_table.appendChild(CreateRow([table]));
@@ -86,10 +82,6 @@ function UpdateReport(report){
 		table.classList.add('stage');
 		
 		let stage_time = stage.end-stage.start;
-		
-		table.appendChild(CreateRow([CreateLabel('Action'),CreateText('action',stage.params.action,true)]));
-		table.appendChild(CreateRow([CreateLabel('Stage Time')
-					,CreateText('stage_time',FormatTimeMilli(stage_time),true)]));
 		
 		
 		if(stage.params.action == 'target'){
@@ -133,24 +125,39 @@ function UpdateReport(report){
 				}
 			}
 
+		   table.appendChild(CreateRow([CreateLabel('Action')
+		                     ,CreateText('action',stage.params.action,true)]));
+		   table.appendChild(CreateRow([CreateLabel('Target Time')
+									,CreateText('target_time',FormatTimeMilli(target_time),true)]));
 			table.appendChild(CreateRow([CreateLabel('Misses')
 									,CreateText('stage_misses',misses,true)]));
-			table.appendChild(CreateRow([CreateLabel('Penalty')
+			table.appendChild(CreateRow([CreateLabel('Penalty','minor_metric')
 									,CreateText('stage_penalty',FormatTimeMilli(penalty),true)]));
-			table.appendChild(CreateRow([CreateLabel('Target Time')
-									,CreateText('target_time',FormatTimeMilli(target_time),true)]));
-			table.appendChild(CreateRow([CreateLabel('Hit Variance')
+		   table.appendChild(CreateRow([CreateLabel('Stage Time','minor_metric')
+					            ,CreateText('stage_time',FormatTimeMilli(stage_time),true)]));
+			table.appendChild(CreateRow([CreateLabel('Hit Variance','minor_metric')
 									,CreateText('hit_variance',FormatTimeMicro(target_hit_variance),true)]));
-			table.appendChild(CreateRow([CreateLabel('Sample Variance')
+			table.appendChild(CreateRow([CreateLabel('Sample Variance','minor_metric')
 									,CreateText('sample_variance',FormatTimeMicro(target_sample_variance),true)]));
-			table.appendChild(CreateRow([CreateLabel('Targets'),targets]));
+			table.appendChild(CreateRow([CreateLabel('Targets','minor_metric'),targets]));
 					
 		}
 		
-		report_table.appendChild(CreateRow([table]));
+		stage_table.appendChild(CreateRow([table]));
 	}
-	
+
+	let report_table = document.getElementById('results_output');
+	let stage_table = document.getElementById('stage_output');
+	while(report_table.rows.length>0){
+		report_table.deleteRow(0);
+	} 	
+	while(stage_table.rows.length>0){
+		stage_table.deleteRow(0);
+	} 	
+		
 	OverallReport();
+	
+
 	for(let i=0; i<report.stages.length; ++i){
 		StageReport(report.stages[i]);
 	}

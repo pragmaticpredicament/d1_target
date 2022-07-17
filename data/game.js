@@ -89,7 +89,7 @@ function Blink(params, remaining_actions, report){
 }
 
 function Target(params, remaining_actions, report){
-	let target_timeout = 1100;
+	let target_timeout = params.result_show; //we need to account for the target showing the result (red/miss or green/hit) 
    let remaining = params.count;
 	let current_ips = {};
 	let oldest_target = null;
@@ -193,7 +193,12 @@ function Target(params, remaining_actions, report){
 			}, GetDelay(params));
 			UpdateReport(report);
 		}else{
-			PerformActions(remaining_actions, report);		
+		   if(expected_returns==0){ //check to make sure last concurrent targets have all finished
+		      //wait for last target to show hit/miss before continuing
+		   	setTimeout(function(){ 
+					PerformActions(remaining_actions, report);
+				}, target_timeout);
+			}		
 		}
    };
 

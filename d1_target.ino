@@ -109,12 +109,18 @@ void handleTarget() {
 	int x_value = 0;
 	int y_value = 0;
 	int z_value = 0;
-	micro_t run_duration = 1000000;
+	micro_t run_duration = 1000000; //how long is the target available to be hit
 	micro_t sample_interval = ceil(1000000 / 800);
 	int sample_count = 0;
+	int result_show = 1000; //time to show hit result/timeout (red/green)
+	//bool noshoot = false;
+	//int light_duration = run_duration //how long led will be light (target may be hit after light goes out if run_duration > light_duration)
 	
 	if(server.hasArg("duration")){
 		run_duration=server.arg("duration").toInt()*1000;
+	}
+	if(server.hasArg("result_show")){
+		result_show=server.arg("result_show").toInt();
 	}
 	if(server.hasArg("g")){
 		x_trigger=y_trigger=z_trigger=server.arg("g").toFloat();
@@ -205,7 +211,7 @@ void handleTarget() {
 	}else{
 		setLed('g');
 	}
-	delay(1000);
+	delay(result_show);
 	setLed('x');
 }
 

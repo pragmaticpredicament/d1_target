@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Open Target</title>
+	<title>D1_Target v0.0.1</title>
 	
 	<style>
 		.actions table {
@@ -76,6 +76,10 @@
 		.target_failed {
 			background-color: yellow;
 		}
+		
+		.minor_metric {
+			color: gray;
+		}
     </style>
 </head>
 <body>
@@ -103,6 +107,12 @@
 			<div class="results">	
 				<label class="section_title">Game Results</label>
 				<table id="results_output" class="results_output"></table>
+			</div>
+		</div>
+		<div class="results_outer">
+			<div class="results">	
+				<label class="section_title">Stage Breakdown</label>
+				<table id="stage_output" class="results_output"></table>
 			</div>
 		</div>
 	</div>

@@ -19,6 +19,7 @@ let ACTION_PARAMETERS = {
 		'duration' : {'unit' : 'millisecond', 'label' : 'On Time (ms)', 'default' : 3000},
 		'g' : {'unit' : 'int', 'label' : 'G Trigger (tenths)', 'default' : 150},
 		'penalty' : {'unit' : 'millisecond', 'label' : 'Miss Penalty (ms)', 'default' : 5000},
+		'result_show' : {'unit' : 'millisecond', 'label' : 'Result Show (ms)', 'default' : 1000}
 	}
 }
 
