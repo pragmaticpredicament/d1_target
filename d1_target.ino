@@ -71,6 +71,16 @@ void setLed(const String &s){
 	setLed(tolower(s[0]));
 }
 
+void blinkLed(int count, int on, int off, String color){
+	for(int i=0;i<count;++i){
+		setLed('x');
+		delay(off);
+		setLed(color);
+		delay(on);
+	}
+	setLed('x');
+}
+
 void handleBlink() {
 	int blink_count=0;
 	int blink_on=500;
@@ -90,12 +100,7 @@ void handleBlink() {
 		blink_color=server.arg("color");
 	}
 	
-	for(int i=0;i<blink_count;++i){
-		setLed(blink_color);
-		delay(blink_on);
-		setLed('x');
-		delay(blink_off);
-	}
+	blinkLed(blink_count, blink_on, blink_off, blink_color);
 
 	String json = "{\"blinked\":true}\n";
 	server.sendHeader("Access-Control-Allow-Origin", "*");
@@ -113,14 +118,25 @@ void handleTarget() {
 	micro_t sample_interval = ceil(1000000 / 800);
 	int sample_count = 0;
 	int result_show = 1000; //time to show hit result/timeout (red/green)
-	//bool noshoot = false;
-	//int light_duration = run_duration //how long led will be light (target may be hit after light goes out if run_duration > light_duration)
+	bool noshoot = false;
+	int light_duration = run_duration; //how long led will be light (target may be hit after light goes out if run_duration > light_duration)
+	String color = "blue";
 	
 	if(server.hasArg("duration")){
 		run_duration=server.arg("duration").toInt()*1000;
+		light_duration=run_duration;
+	}
+	if(server.hasArg("light")){
+		light_duration=server.arg("light").toInt()*1000;
+	}
+	if(server.hasArg("noshoot")){
+		noshoot = true;
 	}
 	if(server.hasArg("result_show")){
 		result_show=server.arg("result_show").toInt();
+	}
+	if(server.hasArg("color")){
+		color=server.arg("color");
 	}
 	if(server.hasArg("g")){
 		x_trigger=y_trigger=z_trigger=server.arg("g").toFloat();
@@ -144,7 +160,7 @@ void handleTarget() {
 	micro_t hit_interval = 0;
 	micro_t max_interval = 0;
 	
-	setLed('b');
+	setLed(color);
 	while(true){
 		micro_t curr = micros();
 		accel.getEvent(&event);
@@ -153,12 +169,16 @@ void handleTarget() {
 			rollover_addition = std::numeric_limits<micro_t>::max() - start;
 			start = 0;
 		}
+		micro_t curr_offset = (curr - start) + rollover_addition;
+		if( (curr_offset/1000) > light_duration ) {
+			setLed('x');
+		} 
 		bucket = curr / sample_interval;
 		
 		if(abs(event.acceleration.x) > x_trigger
 					|| abs(event.acceleration.y) > y_trigger
 					|| abs(event.acceleration.z) > z_trigger ){
-			hit_time= (curr - start) + rollover_addition;
+			hit_time= curr_offset;
 			if(curr < last){
 				 hit_interval = curr + (std::numeric_limits<micro_t>::max()-last);
 			}else{
@@ -206,10 +226,18 @@ void handleTarget() {
 	json += "\"expected_samples\":" + String((micros()-start)/sample_interval) + "}\n";
 	server.sendHeader("Access-Control-Allow-Origin", "*");
 	server.send(200, "application/json", json);
-	if(hit_time == 0){
-		setLed('r');
-	}else{
-		setLed('g');
+	if(noshoot){
+		if(hit_time == 0){
+			setLed('x');
+		}else{
+			blinkLed(5, result_show/10, result_show/10, "red");
+		}
+	}else{	
+		if(hit_time == 0){
+			blinkLed(5, result_show/10, result_show/10, "red");
+		}else{
+			blinkLed(5, result_show/10, result_show/10, "green");
+		}
 	}
 	delay(result_show);
 	setLed('x');

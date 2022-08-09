@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>D1_Target v0.0.1</title>
+	<title>D1_Target v0.1.0</title>
 	
 	<style>
 		.actions table {
@@ -59,7 +59,7 @@
 			width: 320px;
 		}
 		
-		.target_miss, .target_hit, .target_failed{
+		.target_miss, .target_noshoot_miss, .target_hit, .target_noshoot_hit, .target_failed{
 			border-radius: 5px;
 			padding: 2px 8px;
 			font-size: 14px;
@@ -70,8 +70,15 @@
 		.target_miss{
 			background-color: tomato;
 		}
+		.target_noshoot_miss{
+			background-color: lightgray;
+		}
 		.target_hit{
 			background-color: palegreen;
+		}
+		.target_noshoot_hit{
+			background-color: black;
+			color: white;
 		}
 		.target_failed {
 			background-color: yellow;

@@ -33,7 +33,7 @@ function UpdateReport(report){
 		let target_sample_variance = 0;
 		
 		let misses = 0;
-		let penalty = 0;
+		let noshoots = 0;
 		for(let i=0; i<report.stages.length; ++i){
 			let stage = report.stages[i];
 			if(stage.params.action == 'target'){
@@ -42,18 +42,23 @@ function UpdateReport(report){
 					let t_return = stage.returns[t];
 					let t_time = t_return.response ? t_return.response.hit_time : null;
 					if(t_time === 0){
-						++misses;
-						penalty += (stage.params.penalty*1);
-						target_time += (stage.params.duration*1);
-						target_sample_variance += OverVariance(t_return.response)['max'];
+						if(!t_return.request.params.noshoot){
+							++misses;
+							target_time += (stage.params.duration*1);
+							target_sample_variance += OverVariance(t_return.response)['max'];
+						}
 					}else if(t_time === null){
 						//failed call
 						target_time += (stage.params.duration*1);
 					}else{
-						target_time += t_time;
-						let over_variance = OverVariance(t_return.response);
-						target_hit_variance += over_variance['hit'];
-						target_sample_variance += over_variance['max'];
+						if(t_return.request.params.noshoot){
+							++noshoots;
+						}else{
+							target_time += t_time;
+							let over_variance = OverVariance(t_return.response);
+							target_hit_variance += over_variance['hit'];
+							target_sample_variance += over_variance['max'];
+						}
 					}
 				}
 			}
@@ -63,8 +68,8 @@ function UpdateReport(report){
 											,CreateText('target_time',FormatTimeMilli(target_time),true)]));
 		table.appendChild(CreateRow([CreateLabel('Misses')
 											,CreateText('misses',misses,true)]));
-		table.appendChild(CreateRow([CreateLabel('Penalty','minor_metric')
-											,CreateText('penalty',FormatTimeMilli(penalty),true)]));
+		table.appendChild(CreateRow([CreateLabel('NoShoots')
+											,CreateText('noshoots',noshoots,true)]));
 		table.appendChild(CreateRow([CreateLabel('Target Stage Time','minor_metric')
 											,CreateText('target_stage_time',FormatTimeMilli(target_stage_time),true)]));
 		table.appendChild(CreateRow([CreateLabel('Overall','minor_metric')
@@ -87,7 +92,7 @@ function UpdateReport(report){
 		if(stage.params.action == 'target'){
 			let targets = document.createElement('div');
 			let misses = 0;
-			let penalty = 0;
+			let noshoots = 0;
 			let target_time = 0;
 			let target_hit_variance = 0;
 			let target_sample_variance = 0;
@@ -98,30 +103,39 @@ function UpdateReport(report){
 				let t_return = stage.returns[t];
 				let t_time = t_return.response ? t_return.response.hit_time : null;
 				if(t_time === 0){
-					++misses;
-					penalty += (stage.params.penalty*1);
-					target_time += (stage.params.duration*1);
 					let over_variance = OverVariance(t_return.response);
-					let title = 'ip:' + t_return.ip + ', sample_variance:' + FormatTimeMicro(over_variance['max']);
-					targets.appendChild(CreateLabel(FormatTimeMilli(stage.params.duration*1),'target_miss', title));
+					let title = 'ip:' + t_return.request.ip + ', sample_variance:' + FormatTimeMicro(over_variance['max']);
 					target_sample_variance += over_variance['max'];
+											
+					if(t_return.request.params.noshoot){
+						targets.appendChild(CreateLabel(FormatTimeMilli(stage.params.duration*1),'target_noshoot_miss', title));
+					}else{
+						++misses;
+						target_time += (stage.params.duration*1);
+						targets.appendChild(CreateLabel(FormatTimeMilli(stage.params.duration*1),'target_miss', title));
+					}
 				}else if(!t_time){
 					//failed call
 					target_time += (stage.params.duration*1);
-					let title = 'ip:' + t_return.ip;
+					let title = 'ip:' + t_return.request.ip;
 					targets.appendChild(CreateLabel(FormatTimeMilli(stage.params.duration*1),'target_failed', title));
 				}else{
-					target_time += t_time;
 					let over_variance = OverVariance(t_return.response);
-					let title = 'ip:' + t_return.ip + 
+					let title = 'ip:' + t_return.request.ip + 
 									', sample_variance:' + FormatTimeMicro(over_variance['max']) + 
 									', hit_variance:' + FormatTimeMicro(over_variance['hit']) +
 									', x:' + t_return.response.x +
 									', y:' + t_return.response.y +
 									', z:' + t_return.response.z;
-					targets.appendChild(CreateLabel(FormatTimeMilli(t_time),'target_hit', title));
 					target_hit_variance += over_variance['hit'];
 					target_sample_variance += over_variance['max'];
+					if(t_return.request.params.noshoot){
+						++noshoots;
+						targets.appendChild(CreateLabel(FormatTimeMilli(t_time),'target_noshoot_hit', title));
+					}else{
+						target_time += t_time;
+						targets.appendChild(CreateLabel(FormatTimeMilli(t_time),'target_hit', title));
+					}
 				}
 			}
 
@@ -131,8 +145,8 @@ function UpdateReport(report){
 									,CreateText('target_time',FormatTimeMilli(target_time),true)]));
 			table.appendChild(CreateRow([CreateLabel('Misses')
 									,CreateText('stage_misses',misses,true)]));
-			table.appendChild(CreateRow([CreateLabel('Penalty','minor_metric')
-									,CreateText('stage_penalty',FormatTimeMilli(penalty),true)]));
+			table.appendChild(CreateRow([CreateLabel('NoShoots')
+									,CreateText('stage_noshoots',noshoots,true)]));
 		   table.appendChild(CreateRow([CreateLabel('Stage Time','minor_metric')
 					            ,CreateText('stage_time',FormatTimeMilli(stage_time),true)]));
 			table.appendChild(CreateRow([CreateLabel('Hit Variance','minor_metric')

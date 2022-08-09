@@ -1,4 +1,6 @@
 let TARGET_IPS = [];
+let COLORS = ['red','green','blue','white'];
+let LAST_BLINK_COLOR = "blue";
 
 let ADDITIONAL_TIMEOUT = 10000;
 
@@ -11,6 +13,15 @@ function shuffle(array) {
       array[randomIndex], array[currentIndex]];
   }
   return array;
+}
+
+function getResolvedColor(color) {
+	if(color == 'random'){
+		return COLORS[Math.floor(Math.random()*COLORS.length)];
+	}else if(color == 'lastblink'){
+		return LAST_BLINK_COLOR;
+	}
+	return color;
 }
 
 let OUTSTANDING_REQUESTS = []
@@ -78,12 +89,16 @@ function Blink(params, remaining_actions, report){
       }
    };
 
+	let params_copy = Object.assign({}, params); 
+	params_copy.color = getResolvedColor(params.color);
+	LAST_BLINK_COLOR = params_copy.color;
+				
 	TARGET_IPS.forEach(function(item,index){
 	   ++expected_returns;
 		RunRequest({
 						'ip':item,
 		            'command':'blink',
-		            'params':params
+		            'params':params_copy
 		            }, BlinkReturn, 2 * (1*params.count) * (1*params.on + 1*params.off) + ADDITIONAL_TIMEOUT);
 	}); 
 }
@@ -101,6 +116,14 @@ function Target(params, remaining_actions, report){
    	remaining = Math.min(remaining,TARGET_IPS.length);
    }
 
+	let resolved_color = getResolvedColor(params.color);
+	let noshoot_colors = [];
+	COLORS.forEach(function(value, index, array){
+		if(value != resolved_color){
+			noshoot_colors.push(value);
+		}
+	})
+	
    function RandomNotCurrent(){
    	//update current_ips;
    	oldest_target = null;
@@ -142,14 +165,23 @@ function Target(params, remaining_actions, report){
 			if(ip in current_ips){
 				continue;
 			}
-		
+
+			let params_copy = Object.assign({}, params); 
+			params_copy.color = resolved_color;
          ++expected_returns;
-         --remaining;
+         if(Math.random() < (params.noshoot_percent/100)){
+         	params_copy.color = noshoot_colors[Math.floor(Math.random()*noshoot_colors.length)];
+         	params_copy.duration = params.noshoot_duration;
+         	params_copy.noshoot = true;
+         }else{
+         	--remaining;
+         }
          current_ips[ip] = 0; //0 means the request hasn't returned yet
+
 		   RunRequest({
 				'ip':ip,
 				'command':'target',
-				'params':params
+				'params':params_copy
 				}, RequestReturn);
 		}
 		if(random_ips.length==0 && remaining>0 && expected_returns<params.concurrent){
@@ -177,9 +209,9 @@ function Target(params, remaining_actions, report){
 	
 		--expected_returns;
 		if(response){
-			report.stages[report.stages.length-1]['returns'].push({'ip':request.ip,'response':response});
+			report.stages[report.stages.length-1]['returns'].push({'request':request,'response':response});
 		}else{
-			report.stages[report.stages.length-1]['returns'].push({'ip':request.ip,'response':null});
+			report.stages[report.stages.length-1]['returns'].push({'request':request,'response':null});
 		}
 		
 		current_ips[request.ip] = Date.now();

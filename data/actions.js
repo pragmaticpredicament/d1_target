@@ -17,9 +17,12 @@ let ACTION_PARAMETERS = {
 		'concurrent' : {'unit' : 'int', 'label' : 'Concurrent', 'default' : 1},
 		'linked' : {'unit' : 'bool', 'label' : 'Link Concurrent', 'default' : true},
 		'duration' : {'unit' : 'millisecond', 'label' : 'On Time (ms)', 'default' : 3000},
+		'light' : {'unit' : 'millisecond', 'label' : 'On Time (ms)', 'default' : 3000},
 		'g' : {'unit' : 'int', 'label' : 'G Trigger (tenths)', 'default' : 150},
-		'penalty' : {'unit' : 'millisecond', 'label' : 'Miss Penalty (ms)', 'default' : 5000},
-		'result_show' : {'unit' : 'millisecond', 'label' : 'Result Show (ms)', 'default' : 1000}
+		'result_show' : {'unit' : 'millisecond', 'label' : 'Result Show (ms)', 'default' : 1000},
+		'noshoot_percent' : {'unit' : 'int', 'label' : 'Noshoot Percent (%)', 'default' : 0},
+		'noshoot_duration' : {'unit' : 'millisecond', 'label' : 'NoShoot Time (ms)', 'default' : 3000},
+		'color' : {'unit' : 'color', 'label' : 'Color', 'default' : 'blue'},
 	}
 }
 
@@ -123,7 +126,7 @@ function CreateParameters(key,table){
 				input = CreateNumber(parameters[i], attributes.default);
 				break;
 			case 'color':
-				input = CreateSelect('color',['red','green','blue','white'],attributes.default);
+				input = CreateSelect('color',['red','green','blue','white','random','lastblink'],attributes.default);
 				break;
 			case 'bool':
 				input = CreateCheckbox(parameters[i], attributes.default);
