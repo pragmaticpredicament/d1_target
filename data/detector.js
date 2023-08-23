@@ -1,7 +1,7 @@
 
 function PopulateDetector(){
 	let table = document.getElementById('detect');
-	table.appendChild(CreateRow([CreateLabel('Expected Targets'),CreateNumber('detect_target_num', 6)]));
+	table.appendChild(CreateRow([CreateLabel('Expected Targets'),CreateNumber('detect_target_num', 8)]));
 	table.appendChild(CreateRow([CreateLabel('Subnet Prefix'),CreateText('detect_target_subnet', '192.168.8.')]));
 	table.appendChild(CreateRow([CreateLabel('Subnet Start'),CreateText('detect_target_start', 230)]));
 	table.appendChild(CreateRow([CreateLabel('Subnet End'),CreateText('detect_target_end', 254)]));

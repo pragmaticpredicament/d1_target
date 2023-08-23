@@ -10,19 +10,38 @@ let ACTION_PARAMETERS = {
 		'random_delay' : {'unit' : 'millisecond', 'label' : 'Random Time (ms)', 'default' : 0}
 	},
 	'target' : {
-		'count' : {'unit' : 'int', 'label' : 'Count', 'default' : 6},
+		'count' : {'unit' : 'int', 'label' : 'Count', 'default' : 8},
+		//reuse: this determines whether once a target has been light, if it can be shown again during this section.
+		//if enabled, a target can be shown more than once in a target section.
+		//if count > number of physical targets, reuse must be enabled 
+		//if noshoot_percent > 0, reuse must be enabled or you could randomly freeze the game
 		'reuse' : {'unit' : 'bool', 'label' : 'Reuse', 'default' : false},
+	        //delay: introduce a delay of the given value. 	
 		'delay' : {'unit' : 'millisecond', 'label' : 'Delay (ms)', 'default' : 0},
+	        //random_delay: introduce a random delay of at most the given value. 
+		//this will be added to the delay value above 	
 		'random_delay' : {'unit' : 'millisecond', 'label' : 'Random Delay (ms)', 'default' : 0},
+		//concurrent: the number of targets that will be shown at the same time 
+		//(total of shoot + noshoot)	
 		'concurrent' : {'unit' : 'int', 'label' : 'Concurrent', 'default' : 1},
+		//linked: only relevant if concurrent > 1.
+		//  if enabled, all members of the set of currently displayed targets must be engaged 
+		//or timed out before another set of targets is displayed.  
+		//  if disabled, a new target will display after any single target is hit
 		'linked' : {'unit' : 'bool', 'label' : 'Link Concurrent', 'default' : true},
 		'duration' : {'unit' : 'millisecond', 'label' : 'On Time (ms)', 'default' : 3000},
 		'light' : {'unit' : 'millisecond', 'label' : 'On Time (ms)', 'default' : 3000},
 		'g' : {'unit' : 'int', 'label' : 'G Trigger (tenths)', 'default' : 150},
 		'result_show' : {'unit' : 'millisecond', 'label' : 'Result Show (ms)', 'default' : 1000},
+		//noshoot_percent: the percentage chance that the next shown target will be a noshoot.
 		'noshoot_percent' : {'unit' : 'int', 'label' : 'Noshoot Percent (%)', 'default' : 0},
 		'noshoot_duration' : {'unit' : 'millisecond', 'label' : 'NoShoot Time (ms)', 'default' : 3000},
+	        //color: the color of the targets you should try to hit	
 		'color' : {'unit' : 'color', 'label' : 'Color', 'default' : 'blue'},
+		//white_noshoot: removes white from noshoots.
+		//  if red/green colorblind, you can set blue as targets and red/green as noshoots, 
+		//but having white is impossible to delineate
+		'white_noshoot' : {'unit' : 'bool', 'label' : 'White in Noshoot', 'default' : true} 
 	}
 }
 

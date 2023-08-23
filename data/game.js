@@ -1,6 +1,6 @@
 let TARGET_IPS = [];
 let COLORS = ['red','green','blue','white'];
-let LAST_BLINK_COLOR = "blue";
+let LAST_BLINK_COLOR = 'blue';
 
 let ADDITIONAL_TIMEOUT = 10000;
 
@@ -111,16 +111,20 @@ function Target(params, remaining_actions, report){
 	let random_ips = shuffle([].concat(TARGET_IPS));
    let expected_returns = 0;
    let handled_cancel = false;
-   
-   if(!params.reuse){
-   	remaining = Math.min(remaining,TARGET_IPS.length);
-   }
+
+	//if count > the number of physical targets, the game will freeze unless reuse is enabled.
+	//if noshoot_percent > 0, the game can freeze unless reuse is enabled.
+	if( (TARGET_IPS.length < remaining) || ((1*params.noshoot_percent) > 0) ){
+		params.reuse = true;	
+	}
 
 	let resolved_color = getResolvedColor(params.color);
 	let noshoot_colors = [];
 	COLORS.forEach(function(value, index, array){
 		if(value != resolved_color){
-			noshoot_colors.push(value);
+			if(params.white_noshoot || value != 'white'){
+				noshoot_colors.push(value);
+			}
 		}
 	})
 	
