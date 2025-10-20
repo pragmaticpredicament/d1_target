@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>D1_Target v0.2.0</title>
+	<title>D1_Target v0.3.0</title>
 	
 	<style>
 		.actions table {
@@ -44,7 +44,13 @@
 			width: 50%;
 		}
 		
-		.run_detect, .run_clear, .run_actions, .cancel_actions {
+		.action_linebreak {
+			opacity: 0;
+			margin: 0;
+			border: 0;
+		}
+		
+		.run_detect, .run_clear, .run_actions, .cancel_actions, .save_actions, .load_actions  {
 			font-weight: bold;
 			margin-top: 8px;
 			margin-bottom: 13px;
@@ -121,7 +127,20 @@
 		<div class="game_outer">
 			<div class="game">	
 				<label class="section_title">Game Actions</label>
+				<hr class="action_linebreak"/>
+				<div>
+					<select id="load_actions"></select>
+					<button id="delete_actions" class="save" onclick="DeleteSelected(this)">Delete Selected</button>
+					<input type="file" id="import_games_hidden" style="display: none;"/>
+					<button id="import_games" class="import_games" onclick="document.getElementById('import_games_hidden').click();">Import</button>
+				</div>
 				<table id="actions" class="actions"></table>
+				<div>
+					<input type="text" id="game_name" placeholder="Custom Game Name">
+					<button id="save_actions" class="save" onclick="SaveActions(this)">Save</button>
+					<button id="export_games" class="save" onclick="ExportGames(this)">Export</button>
+				</div>
+				<hr class="action_linebreak"/>
 				<button id="run_actions" class="run_actions" onclick="RunGame(this)">Run Game</button>
 				<button id="cancel_actions" class="cancel_actions" onclick="CancelGame(this)">Cancel</button>
 			</div>

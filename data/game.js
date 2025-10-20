@@ -1,5 +1,6 @@
 let TARGET_IPS = [];
 let COLORS = ['red','green','blue','white'];
+let COLORS_NO_WHITE = ['red','green','blue'];
 let LAST_BLINK_COLOR = 'blue';
 
 let ADDITIONAL_TIMEOUT = 10000;
@@ -18,6 +19,8 @@ function shuffle(array) {
 function getResolvedColor(color) {
 	if(color == 'random'){
 		return COLORS[Math.floor(Math.random()*COLORS.length)];
+	}else if(color == 'randomnowhite'){
+		return COLORS_NO_WHITE[Math.floor(Math.random()*COLORS_NO_WHITE.length)];
 	}else if(color == 'lastblink'){
 		return LAST_BLINK_COLOR;
 	}

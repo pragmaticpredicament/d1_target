@@ -31,7 +31,7 @@ let ACTION_PARAMETERS = {
 		'linked' : {'unit' : 'bool', 'label' : 'Link Concurrent', 'default' : true},
 		'duration' : {'unit' : 'millisecond', 'label' : 'On Time (ms)', 'default' : 3000},
 		'light' : {'unit' : 'millisecond', 'label' : 'On Time (ms)', 'default' : 3000},
-		'g' : {'unit' : 'int', 'label' : 'G Trigger (tenths)', 'default' : 150},
+		'g' : {'unit' : 'int', 'label' : 'G Trigger (tenths)', 'default' : 100},
 		'result_show' : {'unit' : 'millisecond', 'label' : 'Result Show (ms)', 'default' : 1000},
 		//noshoot_percent: the percentage chance that the next shown target will be a noshoot.
 		'noshoot_percent' : {'unit' : 'int', 'label' : 'Noshoot Percent (%)', 'default' : 0},
@@ -133,29 +133,33 @@ function CreateRow(elements){
    return tr;
 }
 
-function CreateParameters(key,table){
+function CreateParameters(key,table,state){
 	let parameters = Object.keys(ACTION_PARAMETERS[key]);
 	for(let i=0;i<parameters.length;++i){
 		let attributes = ACTION_PARAMETERS[key][parameters[i]];
+		let value = attributes.default;
+		if (state !== undefined && state[parameters[i]] !== undefined){
+			value = state[parameters[i]];
+		}
 		let input;
 		switch(attributes.unit){
 			case 'int':
 			case 'millisecond':
 			case 'char':
-				input = CreateNumber(parameters[i], attributes.default);
+				input = CreateNumber(parameters[i], value);
 				break;
 			case 'color':
-				input = CreateSelect('color',['red','green','blue','white','random','lastblink'],attributes.default);
+				input = CreateSelect('color',['red','green','blue','white','random','randomnowhite','lastblink'],value);
 				break;
 			case 'bool':
-				input = CreateCheckbox(parameters[i], attributes.default);
+				input = CreateCheckbox(parameters[i], value);
 				break;		
 		}
 		table.appendChild(CreateRow([CreateLabel(attributes.label),input]))
 	}
 }
 
-function CreateAction(key){
+function CreateAction(key,state){
 	let table = document.createElement('table');
 	table.classList.add('action');
 	
@@ -169,7 +173,7 @@ function CreateAction(key){
 	table.append(colgroup);
 	
 	table.appendChild(CreateRow([CreateLabel('Action'),CreateSelect('action',Object.keys(ACTION_PARAMETERS),key, ChangeAction)]));
-	CreateParameters(key,table)
+	CreateParameters(key,table,state)
 	return CreateRow([table,CreateButton('add','+', AddRow),CreateButton('subtract','\u2212',DeleteRow)])
 }
 
@@ -184,9 +188,7 @@ function ChangeAction(event){
 	return;
 }
 
-
-//build object representation of action forms
-function RunGame(){
+function GetActionArray(){
 	let actions = [];
    let action_tables = document.getElementById('actions').querySelectorAll('table');
    for(let i=0; i<action_tables.length; ++i){
@@ -204,6 +206,12 @@ function RunGame(){
    	}
    	actions.push(action);
    }
+   return actions;
+}
+
+//build object representation of action forms
+function RunGame(){
+	actions = GetActionArray();
  	ACTIONS_CANCELLED = false;
    PerformActions(actions);
 	return;
@@ -216,3 +224,144 @@ function CancelGame(){
 document.getElementById('actions').appendChild(CreateAction('target'));
 document.getElementById('actions').appendChild(CreateAction('delay'));
 document.getElementById('actions').appendChild(CreateAction('blink'));
+
+let premade_games = {
+	"1 at a time":[{"action":"blink","count":"3","color":"white","on":"500","off":"500"},{"action":"target","count":"8","reuse":false,"delay":"0","random_delay":"0","concurrent":"1","linked":true,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"0","noshoot_duration":"3000","color":"blue","white_noshoot":true},{"action":"blink","count":"3","color":"white","on":"500","off":"500"}],
+	"2 at a time linked":[{"action":"blink","count":"3","color":"white","on":"500","off":"500"},{"action":"target","count":"8","reuse":false,"delay":"0","random_delay":"0","concurrent":"2","linked":true,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"0","noshoot_duration":"3000","color":"blue","white_noshoot":true},{"action":"blink","count":"3","color":"white","on":"500","off":"500"}],
+	"2 at a time unlinked":[{"action":"blink","count":"3","color":"white","on":"500","off":"500"},{"action":"target","count":"8","reuse":false,"delay":"0","random_delay":"0","concurrent":"2","linked":false,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"0","noshoot_duration":"3000","color":"blue","white_noshoot":true},{"action":"blink","count":"3","color":"white","on":"500","off":"500"}],
+	"3 at a time unlinked":[{"action":"blink","count":"3","color":"white","on":"500","off":"500"},{"action":"target","count":"8","reuse":false,"delay":"0","random_delay":"0","concurrent":"3","linked":false,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"0","noshoot_duration":"3000","color":"blue","white_noshoot":true},{"action":"blink","count":"3","color":"white","on":"500","off":"500"}],
+	"3 at a time noshoots":[{"action":"blink","count":"3","color":"white","on":"500","off":"500"},{"action":"target","count":"8","reuse":true,"delay":"0","random_delay":"0","concurrent":"3","linked":false,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"60","noshoot_duration":"2000","color":"blue","white_noshoot":false},{"action":"blink","count":"3","color":"white","on":"500","off":"500"}],
+	"3 at a time noshoots random":[{"action":"blink","count":"3","color":"randomnowhite","on":"500","off":"500"},{"action":"target","count":"8","reuse":true,"delay":"0","random_delay":"0","concurrent":"3","linked":false,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"60","noshoot_duration":"2000","color":"lastblink","white_noshoot":false},{"action":"blink","count":"3","color":"white","on":"500","off":"500"}],
+	"3 stage 1":[{"action":"blink","count":"3","color":"white","on":"500","off":"500"},{"action":"delay","delay":"500","random_delay":"0"},{"action":"target","count":"8","reuse":true,"delay":"0","random_delay":"0","concurrent":"1","linked":false,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"0","noshoot_duration":"3000","color":"blue","white_noshoot":false},{"action":"blink","count":"3","color":"white","on":"500","off":"500"},{"action":"delay","delay":"500","random_delay":"0"},{"action":"target","count":"8","reuse":false,"delay":"0","random_delay":"0","concurrent":"2","linked":true,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"0","noshoot_duration":"3000","color":"blue","white_noshoot":true},{"action":"blink","count":"3","color":"randomnowhite","on":"500","off":"500"},{"action":"delay","delay":"500","random_delay":"0"},{"action":"target","count":"8","reuse":true,"delay":"0","random_delay":"0","concurrent":"3","linked":false,"duration":"3000","light":"3000","g":"100","result_show":"1000","noshoot_percent":"90","noshoot_duration":"800","color":"lastblink","white_noshoot":false},{"action":"blink","count":"3","color":"white","on":"500","off":"500"}]
+}
+
+function GetStoredGames() {
+	let serialized_games = localStorage.getItem('game_storage')
+	let saved_games = {};
+	if(serialized_games != null){
+		saved_games = JSON.parse(serialized_games);
+	}
+    return saved_games;
+}
+
+function GetAllGames() {
+	return Object.assign({}, premade_games, GetStoredGames());
+}
+
+function PopulateGameSelect() {
+	let all_games = GetAllGames()
+	
+	let select_game = document.getElementById('load_actions');
+	
+	//clear select options
+	for(let i = select_game.options.length - 1; i >= 0; i--) {
+		select_game.remove(i);
+	}
+	
+	//add default
+	{{
+	   let opt = document.createElement("option");
+	   opt.value= '';
+	   opt.textContent = '--Load Game--'; 
+	   select_game.appendChild(opt);
+	}}
+	
+	//add keys from premade and custom games
+	let keys = Object.keys(all_games);
+	for(let i=0; i<keys.length; ++i ) {
+	   let opt = document.createElement("option");
+	   opt.value= keys[i];
+	   opt.textContent = keys[i]; 
+	   select_game.appendChild(opt);
+	}
+}
+
+function SaveActions(event){
+	let saved_games = GetStoredGames();
+	
+	//add new actions
+	let actions = GetActionArray();
+	let game_name = document.getElementById('game_name').value;
+	saved_games[game_name] = actions
+	
+    localStorage.setItem('game_storage', JSON.stringify(saved_games));
+    
+	PopulateGameSelect();
+}
+
+function LoadActions(e){
+	function ReplaceActions(actions){
+		table = document.getElementById('actions');
+		table.innerHTML = "";
+		let new_tbody = document.createElement('tbody');
+		//populate_with_new_rows(new_tbody);
+		for(let i=0; i<actions.length; ++i){
+			table.appendChild(CreateAction(actions[i].action,actions[i]));
+		}
+	}
+  
+	let selected_key = e.target.selectedOptions[0].value;	
+	if(selected_key == ''){
+		return;
+	}
+	ReplaceActions(GetAllGames()[selected_key]);
+}
+
+function DeleteSelected(e) {
+	let saved_games = GetStoredGames();
+	
+	let selected_key = document.getElementById('load_actions').selectedOptions[0].value;
+	
+	if( selected_key in saved_games ) {
+		delete saved_games[selected_key]
+		localStorage.setItem('game_storage', JSON.stringify(saved_games));
+		PopulateGameSelect();
+	}
+}
+
+function ExportGames(event){
+	// Function to download data to a file
+	function PromptDownload(data, filename) {
+		let file = new Blob([data], {type: "application/json"});
+		let a = document.createElement("a"),
+				url = URL.createObjectURL(file);
+		a.href = url;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+		setTimeout(function() {
+			document.body.removeChild(a);
+			window.URL.revokeObjectURL(url);  
+		}, 0); 
+	}
+	
+	let saved_games = GetStoredGames();
+
+	PromptDownload(JSON.stringify(saved_games),'games' + new Date().toISOString().split('T')[0] + '.json');
+}
+
+function ImportGames(e){
+  let file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    let contents = e.target.result;
+	let loaded_games = JSON.parse(contents);
+	
+	let combined_store = Object.assign({}, GetStoredGames(), loaded_games);
+	localStorage.setItem('game_storage', JSON.stringify(combined_store));
+	PopulateGameSelect();
+  };
+  reader.readAsText(file);
+}
+
+PopulateGameSelect();
+document.getElementById('load_actions')
+  .addEventListener('change', LoadActions, false);
+  
+document.getElementById('import_games_hidden')
+  .addEventListener('change', ImportGames, false);
+
+
