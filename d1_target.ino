@@ -4,6 +4,8 @@
 #include <Wire.h>
 #include <FS.h>
 
+const String version = "0.3.0";
+
 typedef unsigned long micro_t;
 
 Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(12345);
@@ -102,7 +104,7 @@ void handleBlink() {
 	
 	blinkLed(blink_count, blink_on, blink_off, blink_color);
 
-	String json = "{\"blinked\":true}\n";
+	String json = "{\"blinked\":true,\"v\":\"" + version + "\"}\n";
 	server.sendHeader("Access-Control-Allow-Origin", "*");
 	server.send(200, "application/json", json);
 }
@@ -218,6 +220,7 @@ void handleTarget() {
 	json += "{\"x\":" + String(x_value) + ",";
 	json += "\"y\":" + String(y_value) + ",";
 	json += "\"z\":" + String(z_value) + ",";
+	json += "\"v\":\"" + version + "\",";
 	json += "\"hit_time\":" + String(floor(hit_time/1000)) + ",";
    json += "\"hit_interval\":" + String(hit_interval) + ",";
 	json += "\"max_interval\":" + String(max_interval) + ",";
@@ -320,6 +323,7 @@ void handleMaxG() {
 	json += "{\"x\":" + String(floor(max_x)) + ",";
 	json += "\"y\":" + String(floor(max_y)) + ",";
 	json += "\"z\":" + String(floor(max_z)) + ",";
+	json += "\"v\":\"" + version + "\",";
 	json += "\"max_interval\":" + String(max_interval) + ",";
 	json += "\"sample_interval\":" + String(sample_interval) + ",";
 	json += "\"samples\":" + String(sample_count) + ",";
@@ -384,6 +388,8 @@ void setup()
 	pinMode(LED_BLUE_1,  OUTPUT);
 	pinMode(LED_BLUE_2,  OUTPUT);
 
+	setLed('w');
+	delay(1000);
 	setLed('x');
 
 	Serial.begin(115200);
@@ -410,6 +416,16 @@ void setup()
 	//accel.setDataRate(ADXL345_DATARATE_400_HZ);
 	//accel.setDataRate(ADXL345_DATARATE_200_HZ);
 	//accel.setDataRate(ADXL345_DATARATE_200_HZ);
+
+	setLed('r');
+	delay(1000);
+	setLed('g');
+	delay(1000);
+	setLed('b');
+	delay(1000);
+	setLed('w');
+	delay(1000);
+	setLed('x');
 
 	WiFi.hostname("shootme");
 	if(wmode == "infra"){
