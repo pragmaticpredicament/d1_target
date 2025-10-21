@@ -36,6 +36,8 @@ The d1 mini is ideally suited to this task
 
 ### Assembly:
 You can arrange your components however you want. It was convenient for me to attach the d1 mini and the boost converter to the battery conatiner:
+
+
 ![Build 1](img/build_1.jpg "Build 1")
 ![Build 2](img/build_2.jpg "Build 2")
 ![Build 3](img/build_3.jpg "Build 3")
