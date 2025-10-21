@@ -20,13 +20,13 @@ The d1 mini is ideally suited to this task
 ### target:
 * WeMos D1 Mini ESP8266 Arduino WiFi Board
 * ADXL345 accelerometer - https://www.ebay.com/itm/114721937607
-* common annode 4 color leds (clear seems brighter head on vs diffuse, common annode allows more current)- https://www.ebay.com/itm/274488658276
+* common annode 4 color leds (clear seems brighter head on vs diffuse, common annode allows more current)- ~~https://www.ebay.com/itm/274488658276~~ I just search "5MM 4pin Common Anode Water Clear RGB" on ebay
 * resistors (I chose 100 ohms for red, 220 ohms for green, and 50 ohms for blue)
-* connectors to make replacing broken leds easier (I used 4 pin jst sm connectors) - https://www.ebay.com/itm/274534656436
+* connectors to make replacing broken leds easier (I used 4 pin jst sm connectors) - https://www.ebay.com/itm/274534656436 (I have stopped using these, I just hardwire all leds now. They haven't proven to be worth the hassle)
 * extra wire, solder, heat shrink etc.. to connect everything together
 
 ### additional:
-* wifi router
+* wifi router ( i use GL.iNet GL-AR300M16-Ext https://www.amazon.com/dp/B07794JRC5)
 * smartphone/computer to connect to targets and run game
 
 # Build Instructions
@@ -234,7 +234,7 @@ Game results are broken down into sections.
 # Design notes
 The d1 mini i/o pins are documented to provide 12ma max, however it supposedly can provide up to 15ma if you use the i/o pins to provide grounds to the leds, which is why I use common annode leds 
 
-Here is the led characterization i got for various resistor configurations using the d1 mini i/o output voltage (for https://www.ebay.com/itm/274488658276)
+Here is the led characterization i got for various resistor configurations using the d1 mini i/o output voltage (for ~~https://www.ebay.com/itm/274488658276~~ search "5MM 4pin Common Anode Water Clear RGB" on ebay)
 I tested both single leds, and 2 leds in parallel (which is the configration used in this project
 
 |Leds in parallel|resistor ohms|Red ma|Green ma|Blue ma|
