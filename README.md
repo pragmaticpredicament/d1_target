@@ -37,12 +37,12 @@ The d1 mini is ideally suited to this task
 ### Assembly:
 You can arrange your components however you want. It was convenient for me to attach the d1 mini and the boost converter to the battery conatiner:
 
-
 ![Build 1](img/build_1.jpg "Build 1")
 ![Build 2](img/build_2.jpg "Build 2")
 ![Build 3](img/build_3.jpg "Build 3")
 
 I left the leds and accelerometers a bit long 
+
 ![Build 4](img/build_4.jpg "Build 4")
 
 I use these little led brackes to help secure the leds.
@@ -53,6 +53,7 @@ I use these little led brackes to help secure the leds.
 ![Build 6](img/build_6.jpg "Build 6")
 
 Here you can see how they are attached to the target, with the accelerometer taped to the center, and the leds just slightly protruding
+
 ![Build 7](img/build_7.jpg "Build 7")
 
 # Ide setup:
