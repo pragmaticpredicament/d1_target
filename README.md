@@ -14,7 +14,7 @@ The d1 mini is ideally suited to this task
 # Bill of materials (per target)
 ### power supply:
 * 2xaa battery box - https://www.ebay.com/itm/274488658276
-* usb pigtail (to plug into d1 mini) - https://www.ebay.com/itm/193849305502
+* ~~usb pigtail (to plug into d1 mini) - https://www.ebay.com/itm/193849305502~~ (I just directly solder the boost converter to the d1 mini now, bypassing this point of failure)
 * boost converter (to convert to 5v) - https://www.ebay.com/itm/143853151565
 
 ### target:
@@ -22,7 +22,7 @@ The d1 mini is ideally suited to this task
 * ADXL345 accelerometer - https://www.ebay.com/itm/114721937607
 * common annode 4 color leds (clear seems brighter head on vs diffuse, common annode allows more current)- ~~https://www.ebay.com/itm/274488658276~~ I just search "5MM 4pin Common Anode Water Clear RGB" on ebay
 * resistors (I chose 100 ohms for red, 220 ohms for green, and 50 ohms for blue)
-* connectors to make replacing broken leds easier (I used 4 pin jst sm connectors) - https://www.ebay.com/itm/274534656436 (I have stopped using these, I just hardwire all leds now. They haven't proven to be worth the hassle)
+* ~~connectors to make replacing broken leds easier (I used 4 pin jst sm connectors) - https://www.ebay.com/itm/274534656436~~ (I have stopped using these, I just hardwire all leds now. They haven't proven to be worth the hassle)
 * extra wire, solder, heat shrink etc.. to connect everything together
 
 ### additional:
